@@ -63,7 +63,7 @@ export function ul (htmlAttribs, children, convertedCSSStyles, passProps = {}) {
         passProps,
         styleSet: 'VIEW'
     });
-    const { rawChildren, nodeIndex, key, baseFontStyle, listsPrefixesRenderers } = passProps;
+    const { rawChildren, nodeIndex, key, baseFontStyle, listsPrefixesRenderers, rtl } = passProps;
     const baseFontSize = baseFontStyle.fontSize || 14;
 
     children = children && children.map((child, index) => {
@@ -81,9 +81,10 @@ export function ul (htmlAttribs, children, convertedCSSStyles, passProps = {}) {
 
         if (rawChild) {
             if (rawChild.parentTag === 'ul') {
+                let margin = rtl ? 'marginLeft' : 'marginRight';
                 prefix = listsPrefixesRenderers && listsPrefixesRenderers.ul ? listsPrefixesRenderers.ul(...rendererArgs) : (
                     <View style={{
-                        marginRight: 10,
+                        [margin]: 10,
                         width: baseFontSize / 2.8,
                         height: baseFontSize / 2.8,
                         marginTop: baseFontSize / 2,
@@ -98,10 +99,16 @@ export function ul (htmlAttribs, children, convertedCSSStyles, passProps = {}) {
             }
         }
         return (
+            rtl ?
+            <View key={`list-${nodeIndex}-${index}-${key}`} style={{ flexDirection: 'row', marginBottom: 10 }}>
+                <View style={{ flex: 1 }}>{ child }</View>
+                { prefix }
+            </View>
+            :
             <View key={`list-${nodeIndex}-${index}-${key}`} style={{ flexDirection: 'row', marginBottom: 10 }}>
                 { prefix }
                 <View style={{ flex: 1 }}>{ child }</View>
-            </View>
+            </View>            
         );
     });
     return (
